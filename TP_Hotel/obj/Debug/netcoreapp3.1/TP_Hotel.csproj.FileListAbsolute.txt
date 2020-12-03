@@ -1,0 +1,13 @@
+C:\Users\Administrateur\Documents\TP_Hotel\TP_Hotel\bin\Debug\netcoreapp3.1\TP_Hotel.exe
+C:\Users\Administrateur\Documents\TP_Hotel\TP_Hotel\bin\Debug\netcoreapp3.1\TP_Hotel.deps.json
+C:\Users\Administrateur\Documents\TP_Hotel\TP_Hotel\bin\Debug\netcoreapp3.1\TP_Hotel.runtimeconfig.json
+C:\Users\Administrateur\Documents\TP_Hotel\TP_Hotel\bin\Debug\netcoreapp3.1\TP_Hotel.runtimeconfig.dev.json
+C:\Users\Administrateur\Documents\TP_Hotel\TP_Hotel\bin\Debug\netcoreapp3.1\TP_Hotel.dll
+C:\Users\Administrateur\Documents\TP_Hotel\TP_Hotel\bin\Debug\netcoreapp3.1\TP_Hotel.pdb
+C:\Users\Administrateur\Documents\TP_Hotel\TP_Hotel\obj\Debug\netcoreapp3.1\TP_Hotel.csprojAssemblyReference.cache
+C:\Users\Administrateur\Documents\TP_Hotel\TP_Hotel\obj\Debug\netcoreapp3.1\TP_Hotel.AssemblyInfoInputs.cache
+C:\Users\Administrateur\Documents\TP_Hotel\TP_Hotel\obj\Debug\netcoreapp3.1\TP_Hotel.AssemblyInfo.cs
+C:\Users\Administrateur\Documents\TP_Hotel\TP_Hotel\obj\Debug\netcoreapp3.1\TP_Hotel.csproj.CoreCompileInputs.cache
+C:\Users\Administrateur\Documents\TP_Hotel\TP_Hotel\obj\Debug\netcoreapp3.1\TP_Hotel.dll
+C:\Users\Administrateur\Documents\TP_Hotel\TP_Hotel\obj\Debug\netcoreapp3.1\TP_Hotel.pdb
+C:\Users\Administrateur\Documents\TP_Hotel\TP_Hotel\obj\Debug\netcoreapp3.1\TP_Hotel.genruntimeconfig.cache
