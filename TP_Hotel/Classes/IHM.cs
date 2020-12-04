@@ -91,8 +91,14 @@ namespace TP_Hotel.Classes
                 switch (choix)
                 {
                     case "1":
-                        ActionAffichageChambresLibres();
-                        ActionReserverChambreLibre();
+                        if (ActionAffichageChambresLibres())
+                        {
+                            ActionReserverChambreLibre();
+                        }
+                        else
+                        {
+                            Console.WriteLine("Hotel complet");
+                        }
                         break;
                     case "2":
                         ActionLibererChambre();
@@ -167,7 +173,7 @@ namespace TP_Hotel.Classes
             return chambres;
         }
 
-        private void ActionAffichageChambresLibres()
+        private bool ActionAffichageChambresLibres()
         {
             List<Chambre> chambres = ActionChercherChambresLibres();
             if (chambres.Count > 0)
@@ -178,11 +184,11 @@ namespace TP_Hotel.Classes
                     Console.WriteLine(c);
                 }
                 Console.WriteLine("\n \n******************************************************************* \n \n");
+                return true;
             }
             else
             {
-                Console.WriteLine("Hotel complet");
-                Console.WriteLine("\n \n******************************************************************* \n \n");
+                return false;
             }
         }
 
@@ -190,69 +196,16 @@ namespace TP_Hotel.Classes
         {
             Console.Write("Nvo client 1 | Déja client 2 : ");
             int numero = Convert.ToInt32(Console.ReadLine());
-            decimal total = 0;
             if (numero == 1)
             {
-                //NvoClient
+                ActionAffichageChambresLibres();
                 Client client = ActionAjouterClient();
-                hotel.Sauvegarde();
-                Console.WriteLine(client);
-                Chambre chambreNvoClient = ActionChercherChambre();
-                if (chambreNvoClient == null)
-                {
-                    Console.WriteLine("Aucune chambre avec ce numero");
-                }
-                else
-                {
-                    if (chambreNvoClient.Statut == ChambreStatut.Occupe)
-                    {
-                        Console.WriteLine("Impossible la chambre est déjà occupee");
-                    }
-                    else
-                    {
-                        numero = chambreNvoClient.Numero;
-                        hotel.ReserverChambreById(numero);
-                        Console.WriteLine($"\n\nChambre {numero} maintenant occupe\n\n");
-                    }
-                }
+                ActionReservationDejaClient();
             }
             else if (numero == 2)
             {
-                //DejaClient
-                Client client = ActionChercherClient();
-                if (client == null)
-                {
-                    Console.WriteLine("Aucun client avec ce numero");
-                }
-                else
-                {
-                    Console.WriteLine(client);
-                    string continuer;
-                    int id = hotel.LastReservationNumber() + 1;
-                    Reservation res = new Reservation(id, ReservationStatut.Valide, client);
-                    do
-                    {
-                        Console.WriteLine("nouvelle reservation (o) / (n)");
-                        continuer = Console.ReadLine();
-                        if (continuer == "o")
-                        {
-                            Chambre chambreDejaClient = ActionChercherChambre();
-                            hotel.ReserverChambreById(chambreDejaClient.Numero);
-                            res.Chambres.Add(chambreDejaClient);
-                        } else if (continuer == "n")
-                        {
-                            foreach (Chambre c in res.Chambres)
-                            {
-                                total += c.Tarif;
-                            }
-                            res.Total = total;
-                            hotel.Reservations.Add(res);
-                        }
-                    } while (continuer == "o");
-                    
-                    hotel.Sauvegarde();
-                    Console.WriteLine($"\n\nChambre {numero} maintenant occupe\n\n");
-                }
+                ActionAffichageChambresLibres();
+                ActionReservationDejaClient();
             }
         }
 
@@ -285,5 +238,61 @@ namespace TP_Hotel.Classes
                 }
             }
         }
+
+        private void ActionReservationDejaClient()
+        {
+            decimal total = 0;
+            Client client = ActionChercherClient();
+            if (client == null)
+            {
+                Console.WriteLine("Aucun client avec ce numero");
+            }
+            else
+            {
+                Console.WriteLine(client);
+                string continuer;
+                int id = hotel.LastReservationNumber() + 1;
+                Reservation res = new Reservation(id, ReservationStatut.Valide, client);
+                do
+                {
+                    if (res.Chambres.Count == 0)
+                    {
+                        continuer = "o";
+                    }
+                    else
+                    {
+                        Console.WriteLine("nouvelle reservation (o) / (n)");
+                        continuer = Console.ReadLine();
+                    }
+                    if (continuer == "o")
+                    {
+                        ActionAffichageChambresLibres();
+                        Chambre chambreDejaClient = ActionChercherChambre();
+                        if (chambreDejaClient.Statut == ChambreStatut.Occupe)
+                        {
+                            Console.WriteLine("Impossible la chambre est déjà occupee");
+                        }
+                        else
+                        {
+                            hotel.ReserverChambreById(chambreDejaClient.Numero);
+                            res.Chambres.Add(chambreDejaClient);
+                            Console.WriteLine($"\n\nChambre {chambreDejaClient.Numero} maintenant occupe\n\n");
+                        }
+
+                    }
+                    else if (continuer == "n")
+                    {
+                        foreach (Chambre c in res.Chambres)
+                        {
+                            total += c.Tarif;
+                        }
+                        res.Total = total;
+                        hotel.Reservations.Add(res);
+                    }
+                } while (continuer == "o");
+                hotel.Sauvegarde();
+            }
+        }
+
     }
 }

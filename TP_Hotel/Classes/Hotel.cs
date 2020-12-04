@@ -41,6 +41,18 @@ namespace TP_Hotel.Classes
         {
             return Chambres.Find(c => c.Numero == num);
         }
+
+        public bool VerifChambreLibre(int num)
+        {
+            Chambre chambre = Chambres.Find(c => c.Numero == num);
+            if (chambre.Statut == ChambreStatut.Libre)
+            {
+                return true;
+            } else
+            {
+                return false;
+            }
+        }
         public List<Chambre> GetChambresLibres()
         {
             return Chambres.FindAll(c => c.Statut == 0);

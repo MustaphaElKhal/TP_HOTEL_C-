@@ -1,2 +1,7 @@
 id;statut;nom;prenom;telephone;idClient;total
 1;Valide;testNom;testPrenom;0320133516;1;69,98
+2;Valide;testNom;testPrenom;0320133516;1;49,98
+3;Valide;testNom;testPrenom;0320133516;1;49,98
+4;Valide;testNom;testPrenom;0320133516;1;29,99
+5;Valide;testNom;testPrenom;0320133516;1;59,98
+6;Valide;testNom;testPrenom;0320133516;1;89,98
