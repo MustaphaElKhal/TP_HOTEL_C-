@@ -15,7 +15,6 @@ namespace TP_Hotel.Classes
         private List<Reservation> reservations;
         private List<Client> clients;
 
-        private Sauvegarde sv;
         public string Nom { get => nom; set => nom = value; }
         public string Adresse { get => adresse; set => adresse = value; }
         public string Telephone { get => telephone; set => telephone = value; }
@@ -25,69 +24,11 @@ namespace TP_Hotel.Classes
 
         public Hotel()
         {
-            sv = new Sauvegarde();
-            Clients = sv.GetClients();
-            Chambres = sv.GetRooms();
-            Reservations = sv.GetReservations();
         }
 
         public Client GetClientByTel(string tel)
         {
             return Clients.Find(c => c.Telephone == tel);
-        }
-
-
-        public Chambre GetChambreById(int num)
-        {
-            return Chambres.Find(c => c.Numero == num);
-        }
-
-        public bool VerifChambreLibre(int num)
-        {
-            Chambre chambre = Chambres.Find(c => c.Numero == num);
-            if (chambre.Statut == ChambreStatut.Libre)
-            {
-                return true;
-            } else
-            {
-                return false;
-            }
-        }
-        public List<Chambre> GetChambresLibres()
-        {
-            return Chambres.FindAll(c => c.Statut == 0);
-        }
-
-        public Chambre ReserverChambreById(int num)
-        {
-            Chambre chambre = Chambres.Find(c => c.Numero == num);
-            chambre.Statut = ChambreStatut.Occupe;
-            sv.SaveRooms(Chambres);
-            return chambre;
-        }
-
-        public void LibererChambreById(int num)
-        {
-            Chambre chambre = Chambres.Find(c => c.Numero == num);
-            chambre.Statut = ChambreStatut.Libre;
-            sv.SaveRooms(Chambres);
-        }
-
-        public void Sauvegarde()
-        {
-            sv.SaveClients(Clients);
-            sv.SaveRooms(Chambres);
-            sv.SaveReservations(Reservations);
-        }
-
-        public int LastClientNumber()
-        {
-            return Clients.Count;
-        }
-
-        public int LastReservationNumber()
-        {
-            return Reservations.Count;
         }
     }
 }

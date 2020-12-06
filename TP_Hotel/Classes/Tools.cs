@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -8,6 +9,8 @@ namespace TP_Hotel.Classes
 {
     class Tools
     {
+        public static SqlConnection Connection = new SqlConnection(@"Data Source=(LocalDb)\coursMusM2I;Integrated Security=True");
+
         public static bool CheckName(string name)
         {
             string pattern = @"[a-zA-Z\s-]+";

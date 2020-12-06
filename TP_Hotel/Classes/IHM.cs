@@ -29,57 +29,13 @@ namespace TP_Hotel.Classes
                         ActionClient();
                         break;
                     case "0":
-                        hotel.Sauvegarde();
                         Environment.Exit(0);
                         break;
                 }
             } while (choix != "0");
         }
 
-        private void MenuPrincipal()
-        {
-            Console.WriteLine("1--- Gestion Réservation");
-            Console.WriteLine("2--- Gestion client");
-        }
-
-        private void MenuReservation()
-        {
-            Console.WriteLine("1--- Reserver une chambre");
-            Console.WriteLine("2--- Liberer une chambre");
-        }
-
-        private void MenuClient()
-        {
-            Console.WriteLine("1--- Ajouter un client");
-            Console.WriteLine("2--- Rechercher un client");
-        }
-
-        private void SousMenuClient()
-        {
-            Console.WriteLine("=====Sous Menu client =====");
-            string choix;
-            do
-            {
-                SousMenuGestionClient();
-                choix = Console.ReadLine();
-                switch (choix)
-                {
-                    case "1":
-                        Console.WriteLine("Modification");
-                        break;
-                    case "2":
-                        Console.WriteLine("Suppression");
-                        break;
-                }
-            } while (choix != "0");
-        }
-
-        private void SousMenuGestionClient()
-        {
-            Console.WriteLine("1--- Modifier le client");
-            Console.WriteLine("2--- Supprimer le client");
-        }
-
+        #region Partie Reservation
         private void ActionReservation()
         {
             Console.WriteLine("=====Menu reservation =====");
@@ -106,76 +62,9 @@ namespace TP_Hotel.Classes
                 }
             } while (choix != "0");
         }
-
-        private void ActionClient()
-        {
-            Console.WriteLine("=====Menu client =====");
-            string choix;
-            do
-            {
-                MenuClient();
-                choix = Console.ReadLine();
-                switch (choix)
-                {
-                    case "1":
-                        ActionAjouterClient();
-                        break;
-                    case "2":
-                        ActionAffichageClient();
-                        SousMenuClient();
-                        break;
-                    case "0":
-                        hotel.Sauvegarde();
-                        break;
-                }
-            } while (choix != "0");
-        }
-
-        private Client ActionAjouterClient()
-        {
-            Console.WriteLine("********************** Création d'un client **********************");
-            Client client = new Client();
-            Tools.TryParseProperty("Nom : ", client, "Nom");
-            Tools.TryParseProperty("Prénom : ", client, "Prenom");
-            Tools.TryParseProperty("Téléphone : ", client, "Telephone");
-            client.Id = hotel.LastClientNumber() + 1;
-            hotel.Clients.Add(client);
-            Console.WriteLine("Client crée avec le numéro " + client.Id);
-            return client;
-        }
-
-        private Client ActionChercherClient()
-        {
-            Console.Write("Tel du client : ");
-            string telephone = (Console.ReadLine());
-            Client client = hotel.GetClientByTel(telephone);
-            return client;
-        }
-
-        private void ActionAffichageClient()
-        {
-            Client client = ActionChercherClient();
-            if (client == null)
-            {
-                Console.WriteLine("Aucun client avec ce numero");
-                Console.WriteLine("\n \n******************************************************************* \n \n");
-            }
-            else
-            {
-                Console.WriteLine(client);
-                Console.WriteLine("\n \n******************************************************************* \n \n");
-            }
-        }
-
-        private List<Chambre> ActionChercherChambresLibres()
-        {
-            List<Chambre> chambres = hotel.GetChambresLibres();
-            return chambres;
-        }
-
         private bool ActionAffichageChambresLibres()
         {
-            List<Chambre> chambres = ActionChercherChambresLibres();
+            List<Chambre> chambres = Chambre.Getchambres();
             if (chambres.Count > 0)
             {
                 Console.WriteLine("Liste des chambres");
@@ -198,25 +87,90 @@ namespace TP_Hotel.Classes
             int numero = Convert.ToInt32(Console.ReadLine());
             if (numero == 1)
             {
-                ActionAffichageChambresLibres();
                 Client client = ActionAjouterClient();
                 ActionReservationDejaClient();
             }
             else if (numero == 2)
             {
-                ActionAffichageChambresLibres();
                 ActionReservationDejaClient();
             }
         }
+        private void ActionReservationDejaClient()
+        {
+            Client client = ActionChercherClient();
+            if (client == null)
+            {
+                Console.WriteLine("Aucun client avec ce numero");
+            }
+            else
+            {
+                string continuer;
+                int count = 0;
+                Reservation res = new Reservation(ReservationStatut.Valide, client);
 
+                if (res.SaveReservation())
+                {
+                    do
+                    {
+                        if (count == 0)
+                        {
+                            continuer = "o";
+                        }
+                        else
+                        {
+                            Console.WriteLine("ajouter nouvelle chambre dans la reservation (o) / (n)");
+                            continuer = Console.ReadLine();
+                            count++;
+                        }
+                        if (continuer == "o")
+                        {
+                            count++;
+                            Chambre chambreDejaClient = ActionChercherChambre();
+                            if (chambreDejaClient.Statut == ChambreStatut.Occupe)
+                            {
+                                Console.WriteLine("Impossible la chambre est déjà occupee");
+                            }
+                            else
+                            {
+                                if (res.SaveRoomOnReservation(chambreDejaClient.Numero))
+                                {
+                                    Console.WriteLine("Reservation de la chambre crée");
+                                    res.Chambres.Add(chambreDejaClient);
+                                    chambreDejaClient.Statut = ChambreStatut.Occupe;
+                                    chambreDejaClient.UpdateChambre();
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Erreur base de données");
+                                }
+                            }
+
+                        }
+                        else if ((continuer == "n"))
+                        {
+                            decimal total = 0M;
+                            foreach (Chambre c in res.Chambres)
+                            {
+                                total += c.Tarif;
+                            }
+                            res.Total = total;
+                            res.Update();
+                        }
+                    } while (continuer == "o");
+                }
+                else
+                {
+                    Console.WriteLine("Erreur base de données");
+                }
+            }
+        }
         private Chambre ActionChercherChambre()
         {
             Console.Write("num chambre : ");
             int numero = Convert.ToInt32(Console.ReadLine());
-            Chambre chambre = hotel.GetChambreById(numero);
+            Chambre chambre = Chambre.GetChambreById(numero);
             return chambre;
         }
-
         private void ActionLibererChambre()
         {
             Chambre chambre = ActionChercherChambre();
@@ -232,67 +186,160 @@ namespace TP_Hotel.Classes
                 }
                 else
                 {
-                    int num = chambre.Numero;
-                    hotel.LibererChambreById(num);
-                    Console.WriteLine($"\n\nChambre {num} de nouveau libre\n\n");
+                    chambre.Statut = ChambreStatut.Libre;
+                    chambre.UpdateChambre();
                 }
             }
         }
+        #endregion
 
-        private void ActionReservationDejaClient()
+        #region Partie Client
+        private void ActionClient()
         {
-            decimal total = 0;
+            Console.WriteLine("=====Menu client =====");
+            string choix;
+            do
+            {
+                MenuClient();
+                choix = Console.ReadLine();
+                switch (choix)
+                {
+                    case "1":
+                        ActionAjouterClient();
+                        break;
+                    case "2":
+                        ActionAffichageClient();
+                        break;
+                }
+            } while (choix != "0");
+        }
+        private Client ActionChercherClient()
+        {
+            Console.Write("Id du client : ");
+            int id = Convert.ToInt32(Console.ReadLine());
+            Client client = Client.GetClientById(id);
+            return client;
+        }
+        private Client ActionAjouterClient()
+        {
+            Console.WriteLine("********************** Création d'un client **********************");
+            Client client = new Client();
+            Tools.TryParseProperty("Nom : ", client, "Nom");
+            Tools.TryParseProperty("Prénom : ", client, "Prenom");
+            Tools.TryParseProperty("Téléphone : ", client, "Telephone");
+
+            if (client.Save())
+            {
+                Console.WriteLine("Client crée avec le numéro " + client.Id);
+            }
+            else
+            {
+                Console.WriteLine("Erreur base de données");
+            }
+            return client;
+        }
+        private void ActionAffichageClient()
+        {
             Client client = ActionChercherClient();
             if (client == null)
             {
                 Console.WriteLine("Aucun client avec ce numero");
+                Console.WriteLine("\n \n******************************************************************* \n \n");
             }
             else
             {
                 Console.WriteLine(client);
-                string continuer;
-                int id = hotel.LastReservationNumber() + 1;
-                Reservation res = new Reservation(id, ReservationStatut.Valide, client);
-                do
-                {
-                    if (res.Chambres.Count == 0)
-                    {
-                        continuer = "o";
-                    }
-                    else
-                    {
-                        Console.WriteLine("nouvelle reservation (o) / (n)");
-                        continuer = Console.ReadLine();
-                    }
-                    if (continuer == "o")
-                    {
-                        ActionAffichageChambresLibres();
-                        Chambre chambreDejaClient = ActionChercherChambre();
-                        if (chambreDejaClient.Statut == ChambreStatut.Occupe)
-                        {
-                            Console.WriteLine("Impossible la chambre est déjà occupee");
-                        }
-                        else
-                        {
-                            hotel.ReserverChambreById(chambreDejaClient.Numero);
-                            res.Chambres.Add(chambreDejaClient);
-                            Console.WriteLine($"\n\nChambre {chambreDejaClient.Numero} maintenant occupe\n\n");
-                        }
-
-                    }
-                    else if (continuer == "n")
-                    {
-                        foreach (Chambre c in res.Chambres)
-                        {
-                            total += c.Tarif;
-                        }
-                        res.Total = total;
-                        hotel.Reservations.Add(res);
-                    }
-                } while (continuer == "o");
-                hotel.Sauvegarde();
+                Console.WriteLine("\n \n******************************************************************* \n \n");
+                SousMenuClient(client);
             }
         }
+
+        private void SousMenuClient(Client client)
+        {
+            Console.WriteLine("=====Sous Menu client =====");
+            string choix;
+            do
+            {
+                SousMenuGestionClient();
+                choix = Console.ReadLine();
+                switch (choix)
+                {
+                    case "1":
+                        ActionModifierClient(client);
+                        break;
+                    case "2":
+                        ActionSupprimerClient(client);
+                        break;
+                }
+            } while (choix != "0");
+        }
+        private void ActionSupprimerClient(Client client)
+        {
+            if (client != null)
+            {
+                if (client.Delete())
+                {
+                    Console.WriteLine("Suppression effectuée");
+                }
+                else
+                {
+                    Console.WriteLine("Erreur base de données");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Aucun client avec cet id");
+            }
+        }
+        private void ActionModifierClient(Client client)
+        {
+            if (client != null)
+            {
+                Console.Write("Merci de saisir le nouveau numéro de téléphone : ");
+                client.Telephone = Console.ReadLine();
+
+                if (client.Update())
+                {
+                    Console.WriteLine("Modification effectuée");
+                }
+                else
+                {
+                    Console.WriteLine("Erreur base de données");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Aucun client avec cet id");
+            }
+        }
+        #endregion
+
+        #region Affichage des choix possibles dans les Menus
+        private void MenuPrincipal()
+        {
+            Console.WriteLine("1--- Gestion Réservation");
+            Console.WriteLine("2--- Gestion client");
+        }
+
+        private void MenuReservation()
+        {
+            Console.WriteLine("1--- Reserver une chambre");
+            Console.WriteLine("2--- Liberer une chambre");
+        }
+
+        private void MenuClient()
+        {
+            Console.WriteLine("1--- Ajouter un client");
+            Console.WriteLine("2--- Rechercher un client");
+        }
+
+        private void SousMenuGestionClient()
+        {
+            Console.WriteLine("1--- Modifier le client");
+            Console.WriteLine("2--- Supprimer le client");
+        }
+
+        #endregion
 
     }
 }

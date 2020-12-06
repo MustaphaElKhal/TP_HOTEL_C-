@@ -11,3 +11,10 @@ C:\Users\Administrateur\Documents\TP_Hotel\TP_Hotel\obj\Debug\netcoreapp3.1\TP_H
 C:\Users\Administrateur\Documents\TP_Hotel\TP_Hotel\obj\Debug\netcoreapp3.1\TP_Hotel.dll
 C:\Users\Administrateur\Documents\TP_Hotel\TP_Hotel\obj\Debug\netcoreapp3.1\TP_Hotel.pdb
 C:\Users\Administrateur\Documents\TP_Hotel\TP_Hotel\obj\Debug\netcoreapp3.1\TP_Hotel.genruntimeconfig.cache
+C:\Users\Administrateur\Documents\TP_Hotel\TP_Hotel\bin\Debug\netcoreapp3.1\System.Data.SqlClient.dll
+C:\Users\Administrateur\Documents\TP_Hotel\TP_Hotel\bin\Debug\netcoreapp3.1\runtimes\win-arm64\native\sni.dll
+C:\Users\Administrateur\Documents\TP_Hotel\TP_Hotel\bin\Debug\netcoreapp3.1\runtimes\win-x64\native\sni.dll
+C:\Users\Administrateur\Documents\TP_Hotel\TP_Hotel\bin\Debug\netcoreapp3.1\runtimes\win-x86\native\sni.dll
+C:\Users\Administrateur\Documents\TP_Hotel\TP_Hotel\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\Users\Administrateur\Documents\TP_Hotel\TP_Hotel\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\Users\Administrateur\Documents\TP_Hotel\TP_Hotel\obj\Debug\netcoreapp3.1\TP_Hotel.csproj.CopyComplete
